@@ -1,0 +1,28 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+yapf = "*"
+flake8 = "*"
+
+[packages]
+flask = "==1.1.2"
+marshmallow = "*"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
+flask-sqlalchemy = "*"
+pytest = "*"
+flask-migrate = "*"
+pymysql = "*"
+
+[requires]
+python_version = "3.8"
+
+[scripts]
+format = "yapf -r -i ./"
+lint   = "flake8 --show-source ./"
+test   = "pytest -vv --ff"
+server   = "pipenv run python ./main.py"
+migrate = "pipenv run flask db upgrade"
