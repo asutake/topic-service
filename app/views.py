@@ -26,7 +26,12 @@ def hello():
 
 @app.route("/topics", methods=["GET"])
 def list_topic():
-    return jsonify(TopicSchema(many=True).dump(Topic.query.all()))
+    return jsonify(TopicSchema(many=True).dump(
+        Topic.query \
+        .offset(request.args.get('offset', 0))
+        .limit(request.args.get('limit', 20))
+        .all()
+    ))
 
 
 @app.route("/topics", methods=["POST"])

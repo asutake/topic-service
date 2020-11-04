@@ -33,6 +33,48 @@ def test_list_topic(client):
         },
     ] == json.loads(res.data)
 
+    res = client.get('/topics?offset=1')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 2,
+            'title': 'タイトル2',
+            'created_at': '2021-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 3,
+            'title': 'タイトル3',
+            'created_at': '2022-11-04T19:28:38',
+            'deleted_at': None,
+        },
+    ] == json.loads(res.data)
+
+    res = client.get('/topics?limit=1')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 1,
+            'title': 'タイトル1',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+        },
+    ] == json.loads(res.data)
+
+    res = client.get('/topics?offset=1&limit=1')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 2,
+            'title': 'タイトル2',
+            'created_at': '2021-11-04T19:28:38',
+            'deleted_at': None,
+        },
+    ] == json.loads(res.data)
+
 
 def test_add_topic(client):
     res = client.post(
