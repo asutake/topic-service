@@ -338,3 +338,33 @@ def test_detail_comment(client):
         'created_at': '2020-11-04T19:28:38',
         'deleted_at': None,
     } == json.loads(res.data)
+
+
+def test_update_topic(client):
+    res = client.put(
+        '/comments/1',
+        data=json.dumps({
+            'topic_id': 3,
+            'text': 'コメント3-1',
+        }),
+        content_type='application/json',
+    )
+    assert 200 == res.status_code
+    assert {
+        'id': 1,
+        'topic_id': 3,
+        'text': 'コメント3-1',
+        'created_at': '2020-11-04T19:28:38',
+        'deleted_at': None,
+    } == json.loads(res.data)
+
+    res = client.get('/comments/1')
+
+    assert 200 == res.status_code
+    assert {
+        'id': 1,
+        'topic_id': 3,
+        'text': 'コメント3-1',
+        'created_at': '2020-11-04T19:28:38',
+        'deleted_at': None,
+    } == json.loads(res.data)

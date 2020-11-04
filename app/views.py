@@ -121,3 +121,17 @@ def add_comment():
 @app.route("/comments/<id>", methods=["GET"])
 def detail_comment(id):
     return jsonify(CommentSchema().dump(Comment.query.get_or_404(id)))
+
+
+@app.route("/comments/<id>", methods=["PUT"])
+def update_comment(id):
+    data = CommentSchema().load(request.json)
+
+    comment = Comment.query.get_or_404(id)
+    comment.topic_id = data.topic_id
+    comment.text = data.text
+
+    db.session.add(comment)
+    db.session.commit()
+
+    return jsonify(CommentSchema().dump(comment))
