@@ -5,7 +5,7 @@ from marshmallow import Schema
 from sqlalchemy import desc
 
 from app.application import app, ma, db
-from app.models import Topic
+from app.models import Topic, Comment
 
 
 class TopicSchema(ma.SQLAlchemySchema):
@@ -16,6 +16,19 @@ class TopicSchema(ma.SQLAlchemySchema):
 
     id = ma.auto_field()
     title = ma.auto_field()
+    created_at = ma.auto_field()
+    deleted_at = ma.auto_field()
+
+
+class CommentSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Comment
+        load_instance = True
+        include_relationships = True
+
+    id = ma.auto_field()
+    topic_id = ma.auto_field()
+    text = ma.auto_field()
     created_at = ma.auto_field()
     deleted_at = ma.auto_field()
 
@@ -74,6 +87,61 @@ def delete_topic(id):
     topic = Topic.query.get_or_404(id)
 
     db.session.delete(topic)
+    db.session.commit()
+
+    return jsonify({}), HTTPStatus.NO_CONTENT
+
+
+@app.route("/comments", methods=["GET"])
+def list_comment():
+    q = Comment.query
+    sort = request.args.get('sort', '')
+    if sort == '-id':
+        q = q.order_by(desc(Comment.id))
+
+    return jsonify(
+        CommentSchema(many=True).dump(
+            q \
+            .offset(request.args.get('offset', 0))
+            .limit(request.args.get('limit', 20))
+            .all())
+    )
+
+
+@app.route("/comments", methods=["POST"])
+def add_comment():
+    comment = CommentSchema().load(request.json)
+
+    db.session.add(comment)
+    db.session.commit()
+
+    return jsonify(CommentSchema().dump(comment)), HTTPStatus.CREATED
+
+
+@app.route("/comments/<id>", methods=["GET"])
+def detail_comment(id):
+    return jsonify(CommentSchema().dump(Comment.query.get_or_404(id)))
+
+
+@app.route("/comments/<id>", methods=["PUT"])
+def update_comment(id):
+    data = CommentSchema().load(request.json)
+
+    comment = Comment.query.get_or_404(id)
+    comment.topic_id = data.topic_id
+    comment.text = data.text
+
+    db.session.add(comment)
+    db.session.commit()
+
+    return jsonify(CommentSchema().dump(comment))
+
+
+@app.route("/comments/<id>", methods=["DELETE"])
+def delete_comment(id):
+    comment = Comment.query.get_or_404(id)
+
+    db.session.delete(comment)
     db.session.commit()
 
     return jsonify({}), HTTPStatus.NO_CONTENT
