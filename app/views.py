@@ -108,6 +108,16 @@ def list_comment():
     )
 
 
+@app.route("/comments", methods=["POST"])
+def add_comment():
+    comment = CommentSchema().load(request.json)
+
+    db.session.add(comment)
+    db.session.commit()
+
+    return jsonify(CommentSchema().dump(comment)), HTTPStatus.CREATED
+
+
 @app.route("/comments/<id>", methods=["GET"])
 def detail_comment(id):
     return jsonify(CommentSchema().dump(Comment.query.get_or_404(id)))

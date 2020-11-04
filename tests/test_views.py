@@ -298,6 +298,35 @@ def test_list_comment(client):
     ] == json.loads(res.data)
 
 
+def test_add_comment(client):
+    res = client.post(
+        '/comments',
+        data=json.dumps({
+            'topic_id': 1,
+            'text': 'コメント1-4',
+        }),
+        content_type='application/json',
+    )
+
+    assert 201 == res.status_code
+
+    d = json.loads(res.data)
+    assert 5 == d['id']
+    assert 1 == d['topic_id']
+    assert 'コメント1-4' == d['text']
+    assert None != d['created_at']
+    assert None == d['deleted_at']
+
+    res = client.get('/comments/5')
+    d = json.loads(res.data)
+
+    assert 5 == d['id']
+    assert 1 == d['topic_id']
+    assert 'コメント1-4' == d['text']
+    assert None != d['created_at']
+    assert None == d['deleted_at']
+
+
 def test_detail_comment(client):
     res = client.get('/comments/1')
 
