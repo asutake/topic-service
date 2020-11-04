@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: cc8a86ca21b2
+Revision ID: d21bb13128f3
 Revises: 
-Create Date: 2020-11-02 14:42:01.958739
+Create Date: 2020-11-03 09:35:58.297829
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cc8a86ca21b2'
+revision = 'd21bb13128f3'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,16 +21,18 @@ def upgrade():
     op.create_table('topic',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=50), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('deleted_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('update_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('deleted_at', sa.TIMESTAMP(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('comment',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('topic_id', sa.Integer(), nullable=True),
     sa.Column('text', sa.String(length=200), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('deleted_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('update_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('deleted_at', sa.TIMESTAMP(), nullable=True),
     sa.ForeignKeyConstraint(['topic_id'], ['topic.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
