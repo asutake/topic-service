@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from flask import jsonify, request
 from marshmallow import Schema
+from sqlalchemy import desc
 
 from app.application import app, ma, db
 from app.models import Topic
@@ -26,12 +27,18 @@ def hello():
 
 @app.route("/topics", methods=["GET"])
 def list_topic():
-    return jsonify(TopicSchema(many=True).dump(
-        Topic.query \
-        .offset(request.args.get('offset', 0))
-        .limit(request.args.get('limit', 20))
-        .all()
-    ))
+    q = Topic.query
+    sort = request.args.get('sort', '')
+    if sort == '-id':
+        q = q.order_by(desc(Topic.id))
+
+    return jsonify(
+        TopicSchema(many=True).dump(
+            q \
+            .offset(request.args.get('offset', 0))
+            .limit(request.args.get('limit', 20))
+            .all())
+    )
 
 
 @app.route("/topics", methods=["POST"])
