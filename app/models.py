@@ -1,5 +1,7 @@
 from datetime import datetime
 from sqlalchemy.orm import backref
+from sqlalchemy.sql import func
+from sqlalchemy.types import TIMESTAMP
 
 from app.application import db
 
@@ -7,8 +9,12 @@ from app.application import db
 class Topic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    deleted_at = db.Column(db.DateTime)
+    created_at = db.Column(TIMESTAMP,
+                           nullable=False,
+                           server_default=func.now())
+    deleted_at = db.Column(TIMESTAMP)
+
+    #update_at = db.Column(TIMESTAMP,nullable=False,server_default=db.text( 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),onupdate=func.now())
 
     def __init__(self, title):
         self.title = title
@@ -18,8 +24,10 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'))
     text = db.Column(db.String(200), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    deleted_at = db.Column(db.DateTime)
+    created_at = db.Column(TIMESTAMP,
+                           nullable=False,
+                           server_default=func.now())
+    deleted_at = db.Column(TIMESTAMP)
 
     topic = db.relationship("Topic",
                             backref=backref("_comments", lazy='dynamic'))
