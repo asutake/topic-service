@@ -95,3 +95,15 @@ def test_update_topic(client):
         'created_at': '2020-11-04T19:28:38',
         'deleted_at': None,
     } == json.loads(res.data)
+
+
+def test_delete_topic(client):
+    res = client.delete('/topics/1')
+
+    assert 204 == res.status_code
+    assert b'' == res.data
+
+    res = client.get('/topics/1')
+
+    assert 404 == res.status_code
+    assert b'404' in res.data
