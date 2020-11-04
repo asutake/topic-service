@@ -25,3 +25,8 @@ def hello():
 @app.route("/topics", methods=["GET"])
 def list_topic():
     return jsonify(TopicSchema(many=True).dump(Topic.query.all()))
+
+
+@app.route("/topics/<id>", methods=["GET"])
+def detail_topic(id):
+    return jsonify(TopicSchema().dump(Topic.query.get_or_404(id)))
