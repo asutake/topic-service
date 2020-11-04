@@ -173,3 +173,126 @@ def test_delete_topic(client):
 
     assert 404 == res.status_code
     assert b'404' in res.data
+
+
+def test_list_comment(client):
+    res = client.get('/comments')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 1,
+            'topic_id': 1,
+            'text': 'コメント1-1',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 2,
+            'topic_id': 1,
+            'text': 'コメント1-2',
+            'created_at': '2021-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 3,
+            'topic_id': 1,
+            'text': 'コメント1-3',
+            'created_at': '2022-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 4,
+            'topic_id': 2,
+            'text': 'コメント2-1',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+        },
+    ] == json.loads(res.data)
+
+    res = client.get('/comments?sort=-id')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 4,
+            'topic_id': 2,
+            'text': 'コメント2-1',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 3,
+            'topic_id': 1,
+            'text': 'コメント1-3',
+            'created_at': '2022-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 2,
+            'topic_id': 1,
+            'text': 'コメント1-2',
+            'created_at': '2021-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 1,
+            'topic_id': 1,
+            'text': 'コメント1-1',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+        },
+    ] == json.loads(res.data)
+
+    res = client.get('/comments?offset=1')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 2,
+            'topic_id': 1,
+            'text': 'コメント1-2',
+            'created_at': '2021-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 3,
+            'topic_id': 1,
+            'text': 'コメント1-3',
+            'created_at': '2022-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 4,
+            'topic_id': 2,
+            'text': 'コメント2-1',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+        },
+    ] == json.loads(res.data)
+
+    res = client.get('/comments?limit=1')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 1,
+            'topic_id': 1,
+            'text': 'コメント1-1',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+        },
+    ] == json.loads(res.data)
+
+    res = client.get('/comments?offset=1&limit=1')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 2,
+            'topic_id': 1,
+            'text': 'コメント1-2',
+            'created_at': '2021-11-04T19:28:38',
+            'deleted_at': None,
+        },
+    ] == json.loads(res.data)

@@ -5,7 +5,7 @@ from marshmallow import Schema
 from sqlalchemy import desc
 
 from app.application import app, ma, db
-from app.models import Topic
+from app.models import Topic, Comment
 
 
 class TopicSchema(ma.SQLAlchemySchema):
@@ -16,6 +16,19 @@ class TopicSchema(ma.SQLAlchemySchema):
 
     id = ma.auto_field()
     title = ma.auto_field()
+    created_at = ma.auto_field()
+    deleted_at = ma.auto_field()
+
+
+class CommentSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Comment
+        load_instance = True
+        include_relationships = True
+
+    id = ma.auto_field()
+    topic_id = ma.auto_field()
+    text = ma.auto_field()
     created_at = ma.auto_field()
     deleted_at = ma.auto_field()
 
@@ -77,3 +90,19 @@ def delete_topic(id):
     db.session.commit()
 
     return jsonify({}), HTTPStatus.NO_CONTENT
+
+
+@app.route("/comments", methods=["GET"])
+def list_comment():
+    q = Comment.query
+    sort = request.args.get('sort', '')
+    if sort == '-id':
+        q = q.order_by(desc(Comment.id))
+
+    return jsonify(
+        CommentSchema(many=True).dump(
+            q \
+            .offset(request.args.get('offset', 0))
+            .limit(request.args.get('limit', 20))
+            .all())
+    )
