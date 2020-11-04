@@ -55,3 +55,13 @@ def update_topic(id):
     db.session.commit()
 
     return jsonify(TopicSchema().dump(topic))
+
+
+@app.route("/topics/<id>", methods=["DELETE"])
+def delete_topic(id):
+    topic = Topic.query.get_or_404(id)
+
+    db.session.delete(topic)
+    db.session.commit()
+
+    return jsonify({}), HTTPStatus.NO_CONTENT
