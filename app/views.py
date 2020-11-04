@@ -1,7 +1,9 @@
-from flask import jsonify
+from http import HTTPStatus
+
+from flask import jsonify, request
 from marshmallow import Schema
 
-from app.application import app, ma
+from app.application import app, ma, db
 from app.models import Topic
 
 
@@ -25,6 +27,16 @@ def hello():
 @app.route("/topics", methods=["GET"])
 def list_topic():
     return jsonify(TopicSchema(many=True).dump(Topic.query.all()))
+
+
+@app.route("/topics", methods=["POST"])
+def add_topic():
+    topic = TopicSchema().load(request.json)
+
+    db.session.add(topic)
+    db.session.commit()
+
+    return jsonify(TopicSchema().dump(topic)), HTTPStatus.CREATED
 
 
 @app.route("/topics/<id>", methods=["GET"])
