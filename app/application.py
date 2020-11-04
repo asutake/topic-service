@@ -1,9 +1,12 @@
-from flask import Flask
-from app import config
-from sqlalchemy.pool import QueuePool
 import os
+
+from flask import Flask
+from sqlalchemy.pool import QueuePool
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+
+from app import config
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.SECRET_KEY
@@ -30,3 +33,4 @@ db = SQLAlchemy(app, session_options={
     'autocommit': False,
 })
 m = Migrate(app, db)
+ma = Marshmallow(app)
