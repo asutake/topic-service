@@ -34,6 +34,32 @@ def test_list_topic(client):
     ] == json.loads(res.data)
 
 
+def test_add_topic(client):
+    res = client.post(
+        '/topics',
+        data=json.dumps({
+            'title': 'タイトル4',
+        }),
+        content_type='application/json',
+    )
+
+    d = json.loads(res.data)
+
+    assert 201 == res.status_code
+    assert 4 == d['id']
+    assert 'タイトル4' == d['title']
+    assert None != d['created_at']
+    assert None == d['deleted_at']
+
+    res = client.get('/topics/4')
+    d = json.loads(res.data)
+
+    assert 4 == d['id']
+    assert 'タイトル4' == d['title']
+    assert None != d['created_at']
+    assert None == d['deleted_at']
+
+
 def test_detail_topic(client):
     res = client.get('/topics/1')
 
