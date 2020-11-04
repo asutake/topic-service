@@ -42,3 +42,16 @@ def add_topic():
 @app.route("/topics/<id>", methods=["GET"])
 def detail_topic(id):
     return jsonify(TopicSchema().dump(Topic.query.get_or_404(id)))
+
+
+@app.route("/topics/<id>", methods=["PUT"])
+def update_topic(id):
+    data = TopicSchema().load(request.json)
+
+    topic = Topic.query.get_or_404(id)
+    topic.title = data.title
+
+    db.session.add(topic)
+    db.session.commit()
+
+    return jsonify(TopicSchema().dump(topic))

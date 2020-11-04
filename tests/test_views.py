@@ -70,3 +70,28 @@ def test_detail_topic(client):
         'created_at': '2020-11-04T19:28:38',
         'deleted_at': None,
     } == json.loads(res.data)
+
+
+def test_update_topic(client):
+    res = client.put(
+        '/topics/1',
+        data=json.dumps({'title': 'タイトルA'}),
+        content_type='application/json',
+    )
+    assert 200 == res.status_code
+    assert {
+        'id': 1,
+        'title': 'タイトルA',
+        'created_at': '2020-11-04T19:28:38',
+        'deleted_at': None,
+    } == json.loads(res.data)
+
+    res = client.get('/topics/1')
+
+    assert 200 == res.status_code
+    assert {
+        'id': 1,
+        'title': 'タイトルA',
+        'created_at': '2020-11-04T19:28:38',
+        'deleted_at': None,
+    } == json.loads(res.data)
