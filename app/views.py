@@ -106,3 +106,8 @@ def list_comment():
             .limit(request.args.get('limit', 20))
             .all())
     )
+
+
+@app.route("/comments/<id>", methods=["GET"])
+def detail_comment(id):
+    return jsonify(CommentSchema().dump(Comment.query.get_or_404(id)))
