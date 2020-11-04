@@ -368,3 +368,15 @@ def test_update_topic(client):
         'created_at': '2020-11-04T19:28:38',
         'deleted_at': None,
     } == json.loads(res.data)
+
+
+def test_delete_comment(client):
+    res = client.delete('/comments/1')
+
+    assert 204 == res.status_code
+    assert b'' == res.data
+
+    res = client.get('/comments/1')
+
+    assert 404 == res.status_code
+    assert b'404' in res.data

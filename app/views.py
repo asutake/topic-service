@@ -135,3 +135,13 @@ def update_comment(id):
     db.session.commit()
 
     return jsonify(CommentSchema().dump(comment))
+
+
+@app.route("/comments/<id>", methods=["DELETE"])
+def delete_comment(id):
+    comment = Comment.query.get_or_404(id)
+
+    db.session.delete(comment)
+    db.session.commit()
+
+    return jsonify({}), HTTPStatus.NO_CONTENT
