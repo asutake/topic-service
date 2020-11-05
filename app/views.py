@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from flask import jsonify, request
 from marshmallow import Schema, fields
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 from app.application import app, ma, db
 from app.models import Topic, Comment, CommentPopularity
@@ -61,9 +61,13 @@ def hello():
 @app.route("/topics", methods=["GET"])
 def list_topic():
     q = Topic.query
+
     sort = request.args.get('sort', '')
     if sort == '-id':
         q = q.order_by(desc(Topic.id))
+    if sort == '-comments':
+        q = q.outerjoin(Comment).group_by(Topic.id)
+        q = q.order_by(desc(func.count(Topic.id)))
 
     return jsonify(
         TopicSchema(many=True).dump(
