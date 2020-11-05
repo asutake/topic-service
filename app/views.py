@@ -1,11 +1,11 @@
 from http import HTTPStatus
 
 from flask import jsonify, request
-from marshmallow import Schema
+from marshmallow import Schema, fields
 from sqlalchemy import desc
 
 from app.application import app, ma, db
-from app.models import Topic, Comment
+from app.models import Topic, Comment, CommentPopularity
 
 
 class TopicSchema(ma.SQLAlchemySchema):
@@ -20,17 +20,37 @@ class TopicSchema(ma.SQLAlchemySchema):
     deleted_at = ma.auto_field()
 
 
+class CommentPopularitySchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = CommentPopularity
+        load_instance = True
+        include_relationships = True
+
+    comment_id = ma.auto_field()
+    likes = ma.auto_field()
+    dislikes = ma.auto_field()
+
+
 class CommentSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Comment
         load_instance = True
         include_relationships = True
+        include_fk = True
 
     id = ma.auto_field()
     topic_id = ma.auto_field()
     text = ma.auto_field()
     created_at = ma.auto_field()
     deleted_at = ma.auto_field()
+
+    popularity = fields.Nested(
+        CommentPopularitySchema(only=(
+            'likes',
+            'dislikes',
+        )),
+        dump_only=True,
+    )
 
 
 @app.route('/')
