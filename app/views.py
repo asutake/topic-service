@@ -5,7 +5,7 @@ from marshmallow import Schema, fields
 from sqlalchemy import desc, func
 
 from app.application import app, ma, db
-from app.models import Topic, Comment, CommentPopularity
+from app.models import Topic, Comment, CommentPopularity, CommentReply
 
 
 class TopicSchema(ma.SQLAlchemySchema):
@@ -122,6 +122,12 @@ def list_comment():
     sort = request.args.get('sort', '')
     if sort == '-id':
         q = q.order_by(desc(Comment.id))
+
+    reply_to_comment_id = request.args.get('reply_to_comment_id', None)
+    if reply_to_comment_id:
+        q = q.outerjoin(CommentReply,
+                        Comment.id == CommentReply.comment_id).filter_by(
+                            reply_to_comment_id=1)
 
     return jsonify(
         CommentSchema(many=True).dump(
