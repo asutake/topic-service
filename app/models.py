@@ -36,6 +36,12 @@ class Comment(db.Model):
         self.topic_id = topic_id
         self.text = text
 
+    @property
+    def popularity(self):
+        if not self._popularity:
+            self._popularity = CommentPopularity(self.id)
+        return self._popularity
+
 
 class CommentPopularity(db.Model):
     comment_id = db.Column(db.Integer,
@@ -44,10 +50,14 @@ class CommentPopularity(db.Model):
     likes = db.Column(db.Integer)
     dislikes = db.Column(db.Integer)
 
-    comment = db.relationship("Comment",
-                              backref=backref("_popularity",
-                                              uselist=False,
-                                              cascade="all, delete-orphan"))
+    comment = db.relationship(
+        "Comment",
+        backref=backref(
+            "_popularity",
+            uselist=False,
+            cascade="all, delete-orphan",
+            lazy='joined',  # for N+1
+        ))
 
     def __init__(self, comment_id, likes=0, dislikes=0):
         self.comment_id = comment_id

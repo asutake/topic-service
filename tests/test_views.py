@@ -186,6 +186,10 @@ def test_list_comment(client):
             'text': 'コメント1-1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 100,
+                'dislikes': 1,
+            },
         },
         {
             'id': 2,
@@ -193,6 +197,10 @@ def test_list_comment(client):
             'text': 'コメント1-2',
             'created_at': '2021-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
         },
         {
             'id': 3,
@@ -200,6 +208,10 @@ def test_list_comment(client):
             'text': 'コメント1-3',
             'created_at': '2022-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
         },
         {
             'id': 4,
@@ -207,6 +219,10 @@ def test_list_comment(client):
             'text': 'コメント2-1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 1,
+                'dislikes': 1,
+            },
         },
     ] == json.loads(res.data)
 
@@ -220,6 +236,10 @@ def test_list_comment(client):
             'text': 'コメント2-1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 1,
+                'dislikes': 1,
+            },
         },
         {
             'id': 3,
@@ -227,6 +247,10 @@ def test_list_comment(client):
             'text': 'コメント1-3',
             'created_at': '2022-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
         },
         {
             'id': 2,
@@ -234,6 +258,10 @@ def test_list_comment(client):
             'text': 'コメント1-2',
             'created_at': '2021-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
         },
         {
             'id': 1,
@@ -241,6 +269,10 @@ def test_list_comment(client):
             'text': 'コメント1-1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 100,
+                'dislikes': 1,
+            },
         },
     ] == json.loads(res.data)
 
@@ -254,6 +286,10 @@ def test_list_comment(client):
             'text': 'コメント1-2',
             'created_at': '2021-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
         },
         {
             'id': 3,
@@ -261,6 +297,10 @@ def test_list_comment(client):
             'text': 'コメント1-3',
             'created_at': '2022-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
         },
         {
             'id': 4,
@@ -268,6 +308,10 @@ def test_list_comment(client):
             'text': 'コメント2-1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 1,
+                'dislikes': 1,
+            },
         },
     ] == json.loads(res.data)
 
@@ -281,6 +325,10 @@ def test_list_comment(client):
             'text': 'コメント1-1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 100,
+                'dislikes': 1,
+            },
         },
     ] == json.loads(res.data)
 
@@ -294,6 +342,10 @@ def test_list_comment(client):
             'text': 'コメント1-2',
             'created_at': '2021-11-04T19:28:38',
             'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
         },
     ] == json.loads(res.data)
 
@@ -337,10 +389,14 @@ def test_detail_comment(client):
         'text': 'コメント1-1',
         'created_at': '2020-11-04T19:28:38',
         'deleted_at': None,
+        'popularity': {
+            'likes': 100,
+            'dislikes': 1,
+        },
     } == json.loads(res.data)
 
 
-def test_update_topic(client):
+def test_update_comment(client):
     res = client.put(
         '/comments/1',
         data=json.dumps({
@@ -356,6 +412,10 @@ def test_update_topic(client):
         'text': 'コメント3-1',
         'created_at': '2020-11-04T19:28:38',
         'deleted_at': None,
+        'popularity': {
+            'likes': 100,
+            'dislikes': 1,
+        },
     } == json.loads(res.data)
 
     res = client.get('/comments/1')
@@ -367,6 +427,10 @@ def test_update_topic(client):
         'text': 'コメント3-1',
         'created_at': '2020-11-04T19:28:38',
         'deleted_at': None,
+        'popularity': {
+            'likes': 100,
+            'dislikes': 1,
+        },
     } == json.loads(res.data)
 
 
