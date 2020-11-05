@@ -77,7 +77,8 @@ class CommentReply(db.Model):
                                               cascade="all, delete-orphan"),
                               foreign_keys=[comment_id])
     reply_to_comment = db.relationship("Comment",
-                                       backref="_replies",
+                                       backref=backref("_replies",
+                                                       lazy='dynamic'),
                                        foreign_keys=[reply_to_comment_id])
 
     def __init__(self, comment_id, reply_to_comment_id):
