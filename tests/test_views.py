@@ -57,6 +57,30 @@ def test_list_topic(client):
         },
     ] == json.loads(res.data)
 
+    res = client.get('/topics?sort=-comments')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 2,
+            'title': 'タイトル2',
+            'created_at': '2021-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 1,
+            'title': 'タイトル1',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+        },
+        {
+            'id': 3,
+            'title': 'タイトル3',
+            'created_at': '2022-11-04T19:28:38',
+            'deleted_at': None,
+        },
+    ] == json.loads(res.data)
+
     res = client.get('/topics?offset=1')
 
     assert 200 == res.status_code
@@ -224,12 +248,78 @@ def test_list_comment(client):
                 'dislikes': 1,
             },
         },
+        {
+            'id': 5,
+            'topic_id': 2,
+            'text': 'コメント2-2',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+        {
+            'id': 6,
+            'topic_id': 2,
+            'text': 'コメント2-3',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+        {
+            'id': 7,
+            'topic_id': 2,
+            'text': 'コメント2-4',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
     ] == json.loads(res.data)
 
     res = client.get('/comments?sort=-id')
 
     assert 200 == res.status_code
     assert [
+        {
+            'id': 7,
+            'topic_id': 2,
+            'text': 'コメント2-4',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+        {
+            'id': 6,
+            'topic_id': 2,
+            'text': 'コメント2-3',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+        {
+            'id': 5,
+            'topic_id': 2,
+            'text': 'コメント2-2',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
         {
             'id': 4,
             'topic_id': 2,
@@ -313,6 +403,39 @@ def test_list_comment(client):
                 'dislikes': 1,
             },
         },
+        {
+            'id': 5,
+            'topic_id': 2,
+            'text': 'コメント2-2',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+        {
+            'id': 6,
+            'topic_id': 2,
+            'text': 'コメント2-3',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+        {
+            'id': 7,
+            'topic_id': 2,
+            'text': 'コメント2-4',
+            'created_at': '2020-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
     ] == json.loads(res.data)
 
     res = client.get('/comments?limit=1')
@@ -363,16 +486,16 @@ def test_add_comment(client):
     assert 201 == res.status_code
 
     d = json.loads(res.data)
-    assert 5 == d['id']
+    assert 8 == d['id']
     assert 1 == d['topic_id']
     assert 'コメント1-4' == d['text']
     assert None != d['created_at']
     assert None == d['deleted_at']
 
-    res = client.get('/comments/5')
+    res = client.get('/comments/8')
     d = json.loads(res.data)
 
-    assert 5 == d['id']
+    assert 8 == d['id']
     assert 1 == d['topic_id']
     assert 'コメント1-4' == d['text']
     assert None != d['created_at']
