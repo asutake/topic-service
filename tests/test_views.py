@@ -283,6 +283,34 @@ def test_list_comment(client):
         },
     ] == json.loads(res.data)
 
+    res = client.get('/comments?reply_to_comment_id=1')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 2,
+            'topic_id': 1,
+            'text': 'コメント1-2',
+            'created_at': '2021-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+        {
+            'id': 3,
+            'topic_id': 1,
+            'text': 'コメント1-3',
+            'created_at': '2022-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+    ] == json.loads(res.data)
+
     res = client.get('/comments?sort=-id')
 
     assert 200 == res.status_code
