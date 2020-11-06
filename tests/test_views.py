@@ -595,3 +595,45 @@ def test_delete_comment(client):
 
     assert 404 == res.status_code
     assert b'404' in res.data
+
+
+def test_like_comment(client):
+    res = client.post(
+        '/comments/1/like',
+        data=json.dumps({}),
+        content_type='application/json',
+    )
+
+    assert 200 == res.status_code
+    assert {
+        'id': 1,
+        'topic_id': 1,
+        'text': 'コメント1-1',
+        'created_at': '2020-11-04T19:28:38',
+        'deleted_at': None,
+        'popularity': {
+            'likes': 101,
+            'dislikes': 1,
+        },
+    } == json.loads(res.data)
+
+
+def test_dislike_comment(client):
+    res = client.post(
+        '/comments/1/dislike',
+        data=json.dumps({}),
+        content_type='application/json',
+    )
+
+    assert 200 == res.status_code
+    assert {
+        'id': 1,
+        'topic_id': 1,
+        'text': 'コメント1-1',
+        'created_at': '2020-11-04T19:28:38',
+        'deleted_at': None,
+        'popularity': {
+            'likes': 100,
+            'dislikes': 2,
+        },
+    } == json.loads(res.data)
