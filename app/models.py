@@ -42,6 +42,14 @@ class Comment(db.Model):
             self._popularity = CommentPopularity(self.id)
         return self._popularity
 
+    def reply(self, comment):
+        if self.topic_id != comment.topic_id:
+            raise Exception('あとで')
+
+        db.session.add(comment)
+        db.session.flush()
+        db.session.add(CommentReply(comment.id, self.id))
+
 
 class CommentPopularity(db.Model):
     comment_id = db.Column(db.Integer,
