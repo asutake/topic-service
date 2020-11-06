@@ -195,3 +195,15 @@ def dislike_comment(id):
     db.session.commit()
 
     return jsonify(CommentSchema().dump(comment))
+
+
+@app.route("/comments/<id>/reply", methods=["POST"])
+def reply_comment(id):
+    comment = CommentSchema().load(request.json)
+
+    reply_to_comment = Comment.query.get_or_404(id)
+    reply_to_comment.reply(comment)
+
+    db.session.commit()
+
+    return jsonify(CommentSchema().dump(comment)), HTTPStatus.CREATED

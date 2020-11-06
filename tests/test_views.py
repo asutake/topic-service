@@ -637,3 +637,62 @@ def test_dislike_comment(client):
             'dislikes': 2,
         },
     } == json.loads(res.data)
+
+
+def test_reply_comment(client):
+    res = client.post(
+        '/comments/1/reply',
+        data=json.dumps({
+            'topic_id': 1,
+            'text': 'コメント1-4',
+        }),
+        content_type='application/json',
+    )
+
+    assert 201 == res.status_code
+
+    d = json.loads(res.data)
+    assert 8 == d['id']
+    assert 1 == d['topic_id']
+    assert 'コメント1-4' == d['text']
+    assert None != d['created_at']
+    assert None == d['deleted_at']
+
+    res = client.get('/comments?reply_to_comment_id=1')
+
+    assert 200 == res.status_code
+    assert [
+        {
+            'id': 2,
+            'topic_id': 1,
+            'text': 'コメント1-2',
+            'created_at': '2021-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+        {
+            'id': 3,
+            'topic_id': 1,
+            'text': 'コメント1-3',
+            'created_at': '2022-11-04T19:28:38',
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+        {
+            'id': 8,
+            'topic_id': 1,
+            'text': 'コメント1-4',
+            'created_at': d['created_at'],
+            'deleted_at': None,
+            'popularity': {
+                'likes': 0,
+                'dislikes': 0,
+            },
+        },
+    ] == json.loads(res.data)
