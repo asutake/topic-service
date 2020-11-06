@@ -64,6 +64,14 @@ class CommentPopularity(db.Model):
         self.likes = likes
         self.dislikes = dislikes
 
+    def like(self):
+        self.likes += 1
+        db.session.add(self)
+
+    def dislike(self):
+        self.dislikes += 1
+        db.session.add(self)
+
 
 class CommentReply(db.Model):
     comment_id = db.Column(db.Integer,

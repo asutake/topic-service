@@ -169,3 +169,23 @@ def delete_comment(id):
     db.session.commit()
 
     return jsonify({}), HTTPStatus.NO_CONTENT
+
+
+@app.route("/comments/<id>/like", methods=["POST"])
+def like_comment(id):
+    comment = Comment.query.get_or_404(id)
+
+    comment.popularity.like()
+    db.session.commit()
+
+    return jsonify(CommentSchema().dump(comment))
+
+
+@app.route("/comments/<id>/dislike", methods=["POST"])
+def dislike_comment(id):
+    comment = Comment.query.get_or_404(id)
+
+    comment.popularity.dislike()
+    db.session.commit()
+
+    return jsonify(CommentSchema().dump(comment))
