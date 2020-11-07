@@ -531,16 +531,16 @@ def test_add_comment(client):
     assert 201 == res.status_code
 
     d = json.loads(res.data)
-    assert 8 == d['id']
+    assert 9 == d['id']
     assert 1 == d['topic_id']
     assert 'コメント1-4' == d['text']
     assert None != d['created_at']
     assert None == d['deleted_at']
 
-    res = client.get('/comments/8')
+    res = client.get('/comments/9')
     d = json.loads(res.data)
 
-    assert 8 == d['id']
+    assert 9 == d['id']
     assert 1 == d['topic_id']
     assert 'コメント1-4' == d['text']
     assert None != d['created_at']
@@ -669,7 +669,7 @@ def test_reply_comment(client):
     assert 201 == res.status_code
 
     d = json.loads(res.data)
-    assert 8 == d['id']
+    assert 9 == d['id']
     assert 1 == d['topic_id']
     assert 'コメント1-4' == d['text']
     assert None != d['created_at']
@@ -702,7 +702,7 @@ def test_reply_comment(client):
             },
         },
         {
-            'id': 8,
+            'id': 9,
             'topic_id': 1,
             'text': 'コメント1-4',
             'created_at': d['created_at'],
