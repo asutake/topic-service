@@ -12,6 +12,7 @@ def test_list_topic(client):
     res = client.get('/topics')
 
     assert 200 == res.status_code
+    assert '3' == res.headers['Resource-Count']
     assert [
         {
             'id': 1,
@@ -203,6 +204,7 @@ def test_list_comment(client):
     res = client.get('/comments')
 
     assert 200 == res.status_code
+    assert '7' == res.headers['Resource-Count']
     assert [
         {
             'id': 1,
