@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 from marshmallow import Schema, fields
 from sqlalchemy import desc, func
 
@@ -69,13 +69,18 @@ def list_topic():
         q = q.outerjoin(Comment).group_by(Topic.id)
         q = q.order_by(desc(func.count(Topic.id)))
 
-    return jsonify(
+    res = make_response(jsonify(
         TopicSchema(many=True).dump(
             q \
             .offset(request.args.get('offset', 0))
             .limit(request.args.get('limit', 20))
             .all())
-    )
+    ))
+
+    # for dashboard
+    res.headers['Resource-Count'] = Topic.query.count()
+
+    return res
 
 
 @app.route("/topics", methods=["POST"])
@@ -129,13 +134,18 @@ def list_comment():
                         Comment.id == CommentReply.comment_id).filter_by(
                             reply_to_comment_id=1)
 
-    return jsonify(
+    res = make_response(jsonify(
         CommentSchema(many=True).dump(
             q \
             .offset(request.args.get('offset', 0))
             .limit(request.args.get('limit', 20))
             .all())
-    )
+    ))
+
+    # for dashboard
+    res.headers['Resource-Count'] = Comment.query.count()
+
+    return res
 
 
 @app.route("/comments", methods=["POST"])
