@@ -19,18 +19,21 @@ def test_list_topic(client):
             'title': 'タイトル1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 3,
         },
         {
             'id': 2,
             'title': 'タイトル2',
             'created_at': '2021-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 4,
         },
         {
             'id': 3,
             'title': 'タイトル3',
             'created_at': '2022-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 1,
         },
     ] == json.loads(res.data)
 
@@ -43,18 +46,21 @@ def test_list_topic(client):
             'title': 'タイトル3',
             'created_at': '2022-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 1,
         },
         {
             'id': 2,
             'title': 'タイトル2',
             'created_at': '2021-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 4,
         },
         {
             'id': 1,
             'title': 'タイトル1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 3,
         },
     ] == json.loads(res.data)
 
@@ -67,18 +73,21 @@ def test_list_topic(client):
             'title': 'タイトル2',
             'created_at': '2021-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 4,
         },
         {
             'id': 1,
             'title': 'タイトル1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 3,
         },
         {
             'id': 3,
             'title': 'タイトル3',
             'created_at': '2022-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 1,
         },
     ] == json.loads(res.data)
 
@@ -91,12 +100,14 @@ def test_list_topic(client):
             'title': 'タイトル2',
             'created_at': '2021-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 4,
         },
         {
             'id': 3,
             'title': 'タイトル3',
             'created_at': '2022-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 1,
         },
     ] == json.loads(res.data)
 
@@ -109,6 +120,7 @@ def test_list_topic(client):
             'title': 'タイトル1',
             'created_at': '2020-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 3,
         },
     ] == json.loads(res.data)
 
@@ -121,6 +133,7 @@ def test_list_topic(client):
             'title': 'タイトル2',
             'created_at': '2021-11-04T19:28:38',
             'deleted_at': None,
+            'comment_num': 4,
         },
     ] == json.loads(res.data)
 
