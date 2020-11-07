@@ -14,8 +14,6 @@ class Topic(db.Model):
                            server_default=func.now())
     deleted_at = db.Column(TIMESTAMP)
 
-    #update_at = db.Column(TIMESTAMP,nullable=False,server_default=db.text( 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),onupdate=func.now())
-
     def __init__(self, title):
         self.title = title
 
