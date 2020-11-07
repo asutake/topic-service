@@ -18,6 +18,7 @@ class TopicSchema(ma.SQLAlchemySchema):
     title = ma.auto_field()
     created_at = ma.auto_field()
     deleted_at = ma.auto_field()
+    comment_num = fields.Int()
 
 
 class CommentPopularitySchema(ma.SQLAlchemySchema):
@@ -60,22 +61,29 @@ def hello():
 
 @app.route("/topics", methods=["GET"])
 def list_topic():
-    q = Topic.query
+    q = db.session.query(
+        Topic.id, Topic.title, Topic.created_at, Topic.deleted_at,
+        func.count(Topic.id)).outerjoin(Comment).group_by(Topic.id)
 
     sort = request.args.get('sort', '')
     if sort == '-id':
         q = q.order_by(desc(Topic.id))
     if sort == '-comments':
-        q = q.outerjoin(Comment).group_by(Topic.id)
         q = q.order_by(desc(func.count(Topic.id)))
 
-    res = make_response(jsonify(
-        TopicSchema(many=True).dump(
-            q \
-            .offset(request.args.get('offset', 0))
-            .limit(request.args.get('limit', 20))
-            .all())
-    ))
+    rows = q.offset(request.args.get('offset',
+                                     0)).limit(request.args.get('limit',
+                                                                20)).all()
+
+    res = make_response(
+        jsonify(
+            TopicSchema(many=True).dump(
+                map(
+                    lambda x: dict(
+                        zip([
+                            "id", "title", "created_at", "deleted_at",
+                            "comment_num"
+                        ], x)), rows))))
 
     # for dashboard
     res.headers['Resource-Count'] = Topic.query.count()
