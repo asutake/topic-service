@@ -63,7 +63,8 @@ def hello():
 def list_topic():
     q = db.session.query(
         Topic.id, Topic.title, Topic.created_at, Topic.deleted_at,
-        func.count(Topic.id)).outerjoin(Comment).group_by(Topic.id)
+        func.count(Topic.id)).filter_by(
+            deleted_at=None).outerjoin(Comment).group_by(Topic.id)
 
     sort = request.args.get('sort', '')
     if sort == '-id':
@@ -86,7 +87,8 @@ def list_topic():
                         ], x)), rows))))
 
     # for dashboard
-    res.headers['Resource-Count'] = Topic.query.count()
+    res.headers['Resource-Count'] = Topic.query.filter_by(
+        deleted_at=None).count()
 
     return res
 
@@ -103,7 +105,8 @@ def add_topic():
 
 @app.route("/topics/<id>", methods=["GET"])
 def detail_topic(id):
-    return jsonify(TopicSchema().dump(Topic.query.get_or_404(id)))
+    return jsonify(TopicSchema().dump(
+        Topic.query.filter_by(id=id, deleted_at=None).first_or_404()))
 
 
 @app.route("/topics/<id>", methods=["PUT"])
@@ -123,7 +126,7 @@ def update_topic(id):
 def delete_topic(id):
     topic = Topic.query.get_or_404(id)
 
-    db.session.delete(topic)
+    topic.delete()
     db.session.commit()
 
     return jsonify({}), HTTPStatus.NO_CONTENT

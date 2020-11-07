@@ -142,24 +142,26 @@ def test_add_topic(client):
     res = client.post(
         '/topics',
         data=json.dumps({
-            'title': 'タイトル4',
+            'title': 'タイトル5',
         }),
         content_type='application/json',
     )
 
-    d = json.loads(res.data)
-
     assert 201 == res.status_code
-    assert 4 == d['id']
-    assert 'タイトル4' == d['title']
+
+    d = json.loads(res.data)
+    assert 5 == d['id']
+    assert 'タイトル5' == d['title']
     assert None != d['created_at']
     assert None == d['deleted_at']
 
-    res = client.get('/topics/4')
-    d = json.loads(res.data)
+    res = client.get('/topics/5')
 
-    assert 4 == d['id']
-    assert 'タイトル4' == d['title']
+    assert 200 == res.status_code
+
+    d = json.loads(res.data)
+    assert 5 == d['id']
+    assert 'タイトル5' == d['title']
     assert None != d['created_at']
     assert None == d['deleted_at']
 
