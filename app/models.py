@@ -52,6 +52,10 @@ class Comment(db.Model):
         db.session.flush()
         db.session.add(CommentReply(comment.id, self.id))
 
+    def delete(self):
+        self.deleted_at = datetime(2012, 3, 3, 10, 10, 10)
+        db.session.add(self)
+
 
 class CommentPopularity(db.Model):
     comment_id = db.Column(db.Integer,

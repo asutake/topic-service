@@ -61,10 +61,10 @@ def hello():
 
 @app.route("/topics", methods=["GET"])
 def list_topic():
-    q = db.session.query(
-        Topic.id, Topic.title, Topic.created_at, Topic.deleted_at,
-        func.count(Topic.id)).filter_by(
-            deleted_at=None).outerjoin(Comment).group_by(Topic.id)
+    q = db.session.query(Topic.id, Topic.title, Topic.created_at,
+                         Topic.deleted_at, func.count(Topic.id)).filter_by(
+                             deleted_at=None).outerjoin(Comment).group_by(
+                                 Topic.id).filter_by(deleted_at=None)
 
     sort = request.args.get('sort', '')
     if sort == '-id':
@@ -134,7 +134,7 @@ def delete_topic(id):
 
 @app.route("/comments", methods=["GET"])
 def list_comment():
-    q = Comment.query
+    q = Comment.query.filter_by(deleted_at=None)
     sort = request.args.get('sort', '')
     if sort == '-id':
         q = q.order_by(desc(Comment.id))
@@ -154,7 +154,8 @@ def list_comment():
     ))
 
     # for dashboard
-    res.headers['Resource-Count'] = Comment.query.count()
+    res.headers['Resource-Count'] = Comment.query.filter_by(
+        deleted_at=None).count()
 
     return res
 
@@ -171,7 +172,8 @@ def add_comment():
 
 @app.route("/comments/<id>", methods=["GET"])
 def detail_comment(id):
-    return jsonify(CommentSchema().dump(Comment.query.get_or_404(id)))
+    return jsonify(CommentSchema().dump(
+        Comment.query.filter_by(id=id, deleted_at=None).first_or_404()))
 
 
 @app.route("/comments/<id>", methods=["PUT"])
@@ -192,7 +194,7 @@ def update_comment(id):
 def delete_comment(id):
     comment = Comment.query.get_or_404(id)
 
-    db.session.delete(comment)
+    comment.delete()
     db.session.commit()
 
     return jsonify({}), HTTPStatus.NO_CONTENT
