@@ -17,6 +17,10 @@ class Topic(db.Model):
     def __init__(self, title):
         self.title = title
 
+    def delete(self):
+        self.deleted_at = datetime(2012, 3, 3, 10, 10, 10)
+        db.session.add(self)
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
