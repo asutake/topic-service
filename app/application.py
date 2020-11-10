@@ -2,9 +2,10 @@ import os
 
 from flask import Flask
 from sqlalchemy.pool import QueuePool
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 
 from app import config
 
@@ -32,5 +33,9 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 db = SQLAlchemy(app, session_options={
     'autocommit': False,
 })
+
 m = Migrate(app, db)
 ma = Marshmallow(app)
+
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
