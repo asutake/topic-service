@@ -16,10 +16,10 @@ app.config['SECRET_KEY'] = config.SECRET_KEY
 app.config[
     'SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{user}:{password}@{host}/{database}?charset=utf8'.format(
         **{
-            'user': os.getenv('DB_USER', 'root'),
-            'password': os.getenv('DB_PASSWORD', ''),
-            'host': os.getenv('DB_HOST', 'localhost:3306'),
-            'database': os.getenv('DB_DATABASE', 'topic'),
+            'user': os.getenv('MYSQL_USER', 'root'),
+            'password': os.getenv('MYSQL_PASSWORD', ''),
+            'host': os.getenv('MYSQL_HOST', 'localhost:3306'),
+            'database': os.getenv('MYSQL_DATABASE', 'topic'),
         })
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True

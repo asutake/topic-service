@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      MYSQL_HOST: db
+    ports:
+      - "9090:9090"
+    links:
+      - db
+    command: "./docker-entrypoint.sh"
+  db:
+    image: mysql:8.0
+    env_file: .env
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_ROOT_PASSWORD:
+    ports:
+      - 3306:3306
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    security_opt:
+      - seccomp:unconfined
