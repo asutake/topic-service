@@ -1,0 +1,16 @@
+.venv
+.env.local
+.envrc
+
+.git*
+
+test*
+.pytest*
+
+README.md
+LICENSE
+
+uwsgi.*
+!uwsgi.ini
+
+docker-compose.yaml
