@@ -9,7 +9,7 @@ import json
 
 
 def fixture():
-    with app.open_resource('../fixture.sql', mode='r') as f:
+    with app.open_resource('../tests/fixture.sql', mode='r') as f:
         for q in f.read().split(';'):
             db.session.execute(q)
         db.session.commit()
@@ -19,7 +19,7 @@ def fixture():
 def _app():
     app.config['TESTING'] = True
     db_fd, app.config['DATABASE'] = tempfile.mkstemp()
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../test.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../tests/test.sqlite'
 
     ctx = app.app_context()
     ctx.push()
