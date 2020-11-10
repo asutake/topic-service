@@ -17,6 +17,7 @@ pytest = "*"
 flask-migrate = "*"
 pymysql = "*"
 uwsgi = "*"
+flask-script = "*"
 
 [requires]
 python_version = "3.8"
