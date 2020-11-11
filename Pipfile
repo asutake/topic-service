@@ -18,16 +18,21 @@ flask-migrate = "*"
 pymysql = "*"
 uwsgi = "*"
 flask-script = "*"
+flake8 = "*"
+black = "*"
 
 [requires]
 python_version = "3.8"
 
 [scripts]
-format = "yapf -r -i ./"
-lint   = "flake8 --show-source ./"
+format = "black ."
+lint   = "flake8 --show-source ."
 test   = "pytest -vv --ff"
 server   = "python main.py"
 migrate = "python manage.py db upgrade --directory ./db/migrations"
 uwsgi-start = ".venv/bin/uwsgi --ini uwsgi.ini"
 uwsgi-stop = ".venv/bin/uwsgi --stop uwsgi.pid"
 uwsgi-reload = ".venv/bin/uwsgi --reload uwsgi.pid"
+
+[pipenv]
+allow_prereleases = true
