@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from flask import jsonify, request, make_response
-from marshmallow import Schema, fields
+from marshmallow import fields
 from sqlalchemy import desc, func
 
 from app.application import app, ma, db

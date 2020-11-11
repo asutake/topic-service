@@ -4,8 +4,6 @@ from app.application import app, db
 
 import os
 import tempfile
-import sys
-import json
 
 
 def fixture():

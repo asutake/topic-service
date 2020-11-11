@@ -154,8 +154,8 @@ def test_add_topic(client):
     d = json.loads(res.data)
     assert 5 == d["id"]
     assert "タイトル5" == d["title"]
-    assert None != d["created_at"]
-    assert None == d["deleted_at"]
+    assert d["created_at"] is not None
+    assert d["deleted_at"] is None
 
     res = client.get("/topics/5")
 
@@ -164,8 +164,8 @@ def test_add_topic(client):
     d = json.loads(res.data)
     assert 5 == d["id"]
     assert "タイトル5" == d["title"]
-    assert None != d["created_at"]
-    assert None == d["deleted_at"]
+    assert d["created_at"] is not None
+    assert d["deleted_at"] is None
 
 
 def test_detail_topic(client):
@@ -538,8 +538,8 @@ def test_add_comment(client):
     assert 9 == d["id"]
     assert 1 == d["topic_id"]
     assert "コメント1-4" == d["text"]
-    assert None != d["created_at"]
-    assert None == d["deleted_at"]
+    assert d["created_at"] is not None
+    assert d["deleted_at"] is None
 
     res = client.get("/comments/9")
     d = json.loads(res.data)
@@ -547,8 +547,8 @@ def test_add_comment(client):
     assert 9 == d["id"]
     assert 1 == d["topic_id"]
     assert "コメント1-4" == d["text"]
-    assert None != d["created_at"]
-    assert None == d["deleted_at"]
+    assert d["created_at"] is not None
+    assert d["deleted_at"] is None
 
 
 def test_detail_comment(client):
@@ -680,8 +680,8 @@ def test_reply_comment(client):
     assert 9 == d["id"]
     assert 1 == d["topic_id"]
     assert "コメント1-4" == d["text"]
-    assert None != d["created_at"]
-    assert None == d["deleted_at"]
+    assert d["created_at"] is not None
+    assert d["deleted_at"] is None
 
     res = client.get("/comments?reply_to_comment_id=1")
 
