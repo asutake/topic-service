@@ -46,49 +46,75 @@ class CommentSchema(ma.SQLAlchemySchema):
     deleted_at = ma.auto_field()
 
     popularity = fields.Nested(
-        CommentPopularitySchema(only=(
-            'likes',
-            'dislikes',
-        )),
+        CommentPopularitySchema(
+            only=(
+                "likes",
+                "dislikes",
+            )
+        ),
         dump_only=True,
     )
 
 
-@app.route('/')
+@app.route("/")
 def hello():
     return "Hello World!"
 
 
 @app.route("/topics", methods=["GET"])
 def list_topic():
-    q = db.session.query(Topic.id, Topic.title, Topic.created_at,
-                         Topic.deleted_at, func.count(Topic.id)).filter_by(
-                             deleted_at=None).outerjoin(Comment).group_by(
-                                 Topic.id).filter_by(deleted_at=None)
+    q = (
+        db.session.query(
+            Topic.id,
+            Topic.title,
+            Topic.created_at,
+            Topic.deleted_at,
+            func.count(Topic.id),
+        )
+        .filter_by(deleted_at=None)
+        .outerjoin(Comment)
+        .group_by(Topic.id)
+        .filter_by(deleted_at=None)
+    )
 
-    sort = request.args.get('sort', '')
-    if sort == '-id':
+    sort = request.args.get("sort", "")
+    if sort == "-id":
         q = q.order_by(desc(Topic.id))
-    if sort == '-comments':
+    if sort == "-comments":
         q = q.order_by(desc(func.count(Topic.id)))
 
-    rows = q.offset(request.args.get('offset',
-                                     0)).limit(request.args.get('limit',
-                                                                20)).all()
+    rows = (
+        q.offset(request.args.get("offset", 0))
+        .limit(request.args.get("limit", 20))
+        .all()
+    )
 
     res = make_response(
         jsonify(
             TopicSchema(many=True).dump(
                 map(
                     lambda x: dict(
-                        zip([
-                            "id", "title", "created_at", "deleted_at",
-                            "comment_num"
-                        ], x)), rows))))
+                        zip(
+                            [
+                                "id",
+                                "title",
+                                "created_at",
+                                "deleted_at",
+                                "comment_num",
+                            ],
+                            x,
+                        )
+                    ),
+                    rows,
+                )
+            )
+        )
+    )
 
     # for dashboard
-    res.headers['Resource-Count'] = Topic.query.filter_by(
-        deleted_at=None).count()
+    res.headers["Resource-Count"] = Topic.query.filter_by(
+        deleted_at=None
+    ).count()
 
     return res
 
@@ -105,8 +131,11 @@ def add_topic():
 
 @app.route("/topics/<id>", methods=["GET"])
 def detail_topic(id):
-    return jsonify(TopicSchema().dump(
-        Topic.query.filter_by(id=id, deleted_at=None).first_or_404()))
+    return jsonify(
+        TopicSchema().dump(
+            Topic.query.filter_by(id=id, deleted_at=None).first_or_404()
+        )
+    )
 
 
 @app.route("/topics/<id>", methods=["PUT"])
@@ -135,27 +164,30 @@ def delete_topic(id):
 @app.route("/comments", methods=["GET"])
 def list_comment():
     q = Comment.query.filter_by(deleted_at=None)
-    sort = request.args.get('sort', '')
-    if sort == '-id':
+    sort = request.args.get("sort", "")
+    if sort == "-id":
         q = q.order_by(desc(Comment.id))
 
-    reply_to_comment_id = request.args.get('reply_to_comment_id', None)
+    reply_to_comment_id = request.args.get("reply_to_comment_id", None)
     if reply_to_comment_id:
-        q = q.outerjoin(CommentReply,
-                        Comment.id == CommentReply.comment_id).filter_by(
-                            reply_to_comment_id=1)
+        q = q.outerjoin(
+            CommentReply, Comment.id == CommentReply.comment_id
+        ).filter_by(reply_to_comment_id=1)
 
-    res = make_response(jsonify(
-        CommentSchema(many=True).dump(
-            q \
-            .offset(request.args.get('offset', 0))
-            .limit(request.args.get('limit', 20))
-            .all())
-    ))
+    res = make_response(
+        jsonify(
+            CommentSchema(many=True).dump(
+                q.offset(request.args.get("offset", 0))
+                .limit(request.args.get("limit", 20))
+                .all()
+            )
+        )
+    )
 
     # for dashboard
-    res.headers['Resource-Count'] = Comment.query.filter_by(
-        deleted_at=None).count()
+    res.headers["Resource-Count"] = Comment.query.filter_by(
+        deleted_at=None
+    ).count()
 
     return res
 
@@ -172,8 +204,11 @@ def add_comment():
 
 @app.route("/comments/<id>", methods=["GET"])
 def detail_comment(id):
-    return jsonify(CommentSchema().dump(
-        Comment.query.filter_by(id=id, deleted_at=None).first_or_404()))
+    return jsonify(
+        CommentSchema().dump(
+            Comment.query.filter_by(id=id, deleted_at=None).first_or_404()
+        )
+    )
 
 
 @app.route("/comments/<id>", methods=["PUT"])
@@ -234,10 +269,11 @@ def reply_comment(id):
 
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Methods',
-                         'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add(
+        "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
+    )
     response.headers.add("Content-Type", "application/json")
 
     return response

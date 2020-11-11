@@ -9,17 +9,17 @@ import json
 
 
 def fixture():
-    with app.open_resource('../tests/fixture.sql', mode='r') as f:
-        for q in f.read().split(';'):
+    with app.open_resource("../tests/fixture.sql", mode="r") as f:
+        for q in f.read().split(";"):
             db.session.execute(q)
         db.session.commit()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def _app():
-    app.config['TESTING'] = True
-    db_fd, app.config['DATABASE'] = tempfile.mkstemp()
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../tests/test.sqlite'
+    app.config["TESTING"] = True
+    db_fd, app.config["DATABASE"] = tempfile.mkstemp()
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../tests/test.sqlite"
 
     ctx = app.app_context()
     ctx.push()
@@ -28,10 +28,10 @@ def _app():
 
     ctx.pop()
     os.close(db_fd)
-    os.unlink(app.config['DATABASE'])
+    os.unlink(app.config["DATABASE"])
 
 
-@pytest.fixture(scope='function')  # TODO: change scope to session
+@pytest.fixture(scope="function")  # TODO: change scope to session
 def _db(_app):
     db.drop_all()
     db.create_all()
@@ -43,7 +43,7 @@ def _db(_app):
     db.drop_all()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def session(_app, _db):
     session = _db.session
     session.begin_nested()
@@ -54,6 +54,6 @@ def session(_app, _db):
     session.remove()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def client(session):
     yield app.test_client()

@@ -1,4 +1,4 @@
-SECRET_KEY = 'secret key'
+SECRET_KEY = "secret key"
 
 # DEBUG = False
 # https://msiz07-flask-docs-ja.readthedocs.io/ja/latest/config.html#environment-and-debug-features

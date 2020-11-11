@@ -10,9 +10,9 @@ from app.application import db
 class Topic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
-    created_at = db.Column(TIMESTAMP,
-                           nullable=False,
-                           server_default=func.now())
+    created_at = db.Column(
+        TIMESTAMP, nullable=False, server_default=func.now()
+    )
     deleted_at = db.Column(TIMESTAMP)
 
     def __init__(self, title):
@@ -25,15 +25,16 @@ class Topic(db.Model):
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'))
+    topic_id = db.Column(db.Integer, db.ForeignKey("topic.id"))
     text = db.Column(db.String(200), nullable=False)
-    created_at = db.Column(TIMESTAMP,
-                           nullable=False,
-                           server_default=func.now())
+    created_at = db.Column(
+        TIMESTAMP, nullable=False, server_default=func.now()
+    )
     deleted_at = db.Column(TIMESTAMP)
 
-    topic = db.relationship("Topic",
-                            backref=backref("_comments", lazy='dynamic'))
+    topic = db.relationship(
+        "Topic", backref=backref("_comments", lazy="dynamic")
+    )
 
     def __init__(self, topic_id, text):
         self.topic_id = topic_id
@@ -47,7 +48,7 @@ class Comment(db.Model):
 
     def reply(self, comment):
         if self.topic_id != comment.topic_id:
-            raise Exception('あとで')
+            raise Exception("あとで")
 
         db.session.add(comment)
         db.session.flush()
@@ -59,9 +60,9 @@ class Comment(db.Model):
 
 
 class CommentPopularity(db.Model):
-    comment_id = db.Column(db.Integer,
-                           db.ForeignKey('comment.id'),
-                           primary_key=True)
+    comment_id = db.Column(
+        db.Integer, db.ForeignKey("comment.id"), primary_key=True
+    )
     likes = db.Column(db.Integer)
     dislikes = db.Column(db.Integer)
 
@@ -71,8 +72,9 @@ class CommentPopularity(db.Model):
             "_popularity",
             uselist=False,
             cascade="all, delete-orphan",
-            lazy='joined',  # for N+1
-        ))
+            lazy="joined",  # for N+1
+        ),
+    )
 
     def __init__(self, comment_id, likes=0, dislikes=0):
         self.comment_id = comment_id
@@ -89,18 +91,23 @@ class CommentPopularity(db.Model):
 
 
 class CommentReply(db.Model):
-    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), primary_key=True)
-    reply_to_comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), primary_key=True)
+    comment_id = db.Column(
+        db.Integer, db.ForeignKey("comment.id"), primary_key=True
+    )
+    reply_to_comment_id = db.Column(
+        db.Integer, db.ForeignKey("comment.id"), primary_key=True
+    )
 
-    comment = db.relationship("Comment",
-                              backref=backref("_reply",
-                                              uselist=False,
-                                              cascade="all, delete-orphan"),
-                              foreign_keys=[comment_id])
-    reply_to_comment = db.relationship("Comment",
-                                       backref=backref("_replies",
-                                                       lazy='dynamic'),
-                                       foreign_keys=[reply_to_comment_id])
+    comment = db.relationship(
+        "Comment",
+        backref=backref("_reply", uselist=False, cascade="all, delete-orphan"),
+        foreign_keys=[comment_id],
+    )
+    reply_to_comment = db.relationship(
+        "Comment",
+        backref=backref("_replies", lazy="dynamic"),
+        foreign_keys=[reply_to_comment_id],
+    )
 
     def __init__(self, comment_id, reply_to_comment_id):
         self.comment_id = comment_id
