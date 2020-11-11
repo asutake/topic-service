@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from sqlalchemy.orm import backref
 from sqlalchemy.sql import func
 from sqlalchemy.types import TIMESTAMP
@@ -88,10 +89,8 @@ class CommentPopularity(db.Model):
 
 
 class CommentReply(db.Model):
-    comment_id = db.Column(db.Integer,
-                           db.ForeignKey('comment.id'),
-                           primary_key=True)
-    reply_to_comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), primary_key=True)
+    reply_to_comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), primary_key=True)
 
     comment = db.relationship("Comment",
                               backref=backref("_reply",
