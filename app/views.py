@@ -164,6 +164,10 @@ def delete_topic(id):
 @app.route("/comments", methods=["GET"])
 def list_comment():
     q = Comment.query.filter_by(deleted_at=None)
+    topic_id = request.args.get("topic_id", "")
+    if topic_id:
+        q = q.filter_by(topic_id=topic_id)
+
     sort = request.args.get("sort", "")
     if sort == "-id":
         q = q.order_by(desc(Comment.id))
@@ -275,5 +279,6 @@ def after_request(response):
         "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
     )
     response.headers.add("Content-Type", "application/json")
+    response.headers.add("Access-Control-Expose-Headers", "Resource-Count")
 
     return response
