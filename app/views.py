@@ -56,6 +56,17 @@ class CommentSchema(ma.SQLAlchemySchema):
     )
 
 
+class TopicCreateSchema(ma.SQLAlchemySchema):
+    pass
+    # id = ma.auto_field()
+    # title = ma.auto_field()
+    # comment = ma.
+
+
+class CommentReplySchema(ma.SQLAlchemySchema):
+    text = fields.String()
+
+
 @app.route("/")
 def hello():
     return "Hello World!"
@@ -112,9 +123,7 @@ def list_topic():
     )
 
     # for dashboard
-    res.headers["Resource-Count"] = Topic.query.filter_by(
-        deleted_at=None
-    ).count()
+    res.headers["Resource-Count"] = q.count()
 
     return res
 
@@ -189,9 +198,7 @@ def list_comment():
     )
 
     # for dashboard
-    res.headers["Resource-Count"] = Comment.query.filter_by(
-        deleted_at=None
-    ).count()
+    res.headers["Resource-Count"] = q.count()
 
     return res
 
@@ -261,10 +268,10 @@ def dislike_comment(id):
 
 @app.route("/comments/<id>/reply", methods=["POST"])
 def reply_comment(id):
-    comment = CommentSchema().load(request.json)
+    comment = CommentReplySchema().load(request.json)
 
     reply_to_comment = Comment.query.get_or_404(id)
-    reply_to_comment.reply(comment)
+    reply_to_comment.reply(Comment(reply_to_comment.topic_id, comment["text"]))
 
     db.session.commit()
 
