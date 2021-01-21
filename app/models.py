@@ -19,7 +19,7 @@ class Topic(db.Model):
         self.title = title
 
     def delete(self):
-        self.deleted_at = datetime(2012, 3, 3, 10, 10, 10)
+        self.deleted_at = datetime.now()
         db.session.add(self)
 
     @classmethod
@@ -67,7 +67,7 @@ class Comment(db.Model):
         db.session.add(CommentReply(comment.id, self.id))
 
     def delete(self):
-        self.deleted_at = datetime(2012, 3, 3, 10, 10, 10)
+        self.deleted_at = datetime.now()
         db.session.add(self)
 
 
