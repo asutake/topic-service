@@ -22,6 +22,18 @@ class Topic(db.Model):
         self.deleted_at = datetime(2012, 3, 3, 10, 10, 10)
         db.session.add(self)
 
+    @classmethod
+    def create(cls, title, text):
+        topic = cls(title)
+        db.session.add(topic)
+
+        db.session.flush()
+
+        comment = Comment(topic.id, text)
+        db.session.add(comment)
+
+        return topic
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -303,7 +303,6 @@ def test_list_comment(client):
     ] == json.loads(res.data)
 
     res = client.get("/comments?reply_to_comment_id=1")
-
     assert 200 == res.status_code
     assert [
         {
@@ -329,6 +328,10 @@ def test_list_comment(client):
             },
         },
     ] == json.loads(res.data)
+
+    res = client.get("/comments?reply_to_comment_id=2")
+    assert 200 == res.status_code
+    assert [] == json.loads(res.data)
 
     res = client.get("/comments?sort=-id")
 
@@ -573,8 +576,15 @@ def test_update_comment(client):
         "/comments/1",
         data=json.dumps(
             {
+                "id": 1,
                 "topic_id": 3,
                 "text": "コメント3-1",
+                "created_at": "2020-11-04T19:28:38",
+                "deleted_at": None,
+                # "popularity": {
+                #    "likes": 100,
+                #    "dislikes": 1,
+                # },
             }
         ),
         content_type="application/json",
@@ -663,11 +673,12 @@ def test_dislike_comment(client):
 
 
 def test_reply_comment(client):
+    # 返信の時はtopic_id いらないよね
     res = client.post(
         "/comments/1/reply",
         data=json.dumps(
             {
-                "topic_id": 1,
+                # "topic_id": 1,
                 "text": "コメント1-4",
             }
         ),

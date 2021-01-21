@@ -57,10 +57,8 @@ class CommentSchema(ma.SQLAlchemySchema):
 
 
 class TopicCreateSchema(ma.SQLAlchemySchema):
-    pass
-    # id = ma.auto_field()
-    # title = ma.auto_field()
-    # comment = ma.
+    title = fields.String()
+    text = fields.String()
 
 
 class CommentReplySchema(ma.SQLAlchemySchema):
@@ -138,6 +136,20 @@ def add_topic():
     return jsonify(TopicSchema().dump(topic)), HTTPStatus.CREATED
 
 
+@app.route("/topics/create", methods=["POST"])
+def create_topic():
+    data = TopicCreateSchema().load(request.json)
+
+    topic = Topic.create(
+        data["title"],
+        data["text"],
+    )
+
+    db.session.commit()
+
+    return jsonify(TopicSchema().dump(topic)), HTTPStatus.CREATED
+
+
 @app.route("/topics/<id>", methods=["GET"])
 def detail_topic(id):
     return jsonify(
@@ -185,7 +197,7 @@ def list_comment():
     if reply_to_comment_id:
         q = q.outerjoin(
             CommentReply, Comment.id == CommentReply.comment_id
-        ).filter_by(reply_to_comment_id=1)
+        ).filter_by(reply_to_comment_id=reply_to_comment_id)
 
     res = make_response(
         jsonify(
@@ -268,10 +280,11 @@ def dislike_comment(id):
 
 @app.route("/comments/<id>/reply", methods=["POST"])
 def reply_comment(id):
-    comment = CommentReplySchema().load(request.json)
+    data = CommentReplySchema().load(request.json)
 
     reply_to_comment = Comment.query.get_or_404(id)
-    reply_to_comment.reply(Comment(reply_to_comment.topic_id, comment["text"]))
+    comment = Comment(reply_to_comment.topic_id, data["text"])
+    reply_to_comment.reply(comment)
 
     db.session.commit()
 
